@@ -1,7 +1,7 @@
 import pygame
 
 # Create a blank image with a white background
-width, height = 400, 400
+width, height = 800, 800
 
 # Define the properties of the Mandelbrot set
 xmin, xmax = -1.0, 1.0
@@ -15,6 +15,13 @@ pygame.init()
 # Create a Pygame window
 screen = pygame.display.set_mode((width,height))
 pygame.display.set_caption('Mandelbrot Set')
+
+
+def get_zoom(coordinate, zoom_factor):
+    if coordinate < 0:
+        return coordinate + zoom_factor
+    return coordinate - zoom_factor
+
 
 def get_new_boundaries(x, y, xmin, xmax, ymin, ymax, zoom):
     zx = x * (xmax - xmin) / (width - 1) + xmin
@@ -49,9 +56,14 @@ def get_new_boundaries(x, y, xmin, xmax, ymin, ymax, zoom):
         xmin += diff_x
         xmax += diff_x
 
-    return xmin / zoom, xmax / zoom, ymin / zoom, ymax / zoom
+    xmin = get_zoom(xmin, zoom)
+    xmax = get_zoom(xmax, zoom)
+    ymin = get_zoom(ymin, zoom)
+    ymax = get_zoom(ymax, zoom)
 
-zoom = 1.1
+    return xmin, xmax, ymin, ymax
+
+zoom = 0.1
 running = True
 draw = True
 while running:
@@ -82,4 +94,6 @@ while running:
                 screen.set_at((x, y), (r, g, b))
 
         pygame.display.flip()
+        print(f'xmin: {xmin} xmax: {xmax}')
+        print(f'ymin: {ymin} ymax: {ymax}')
     draw = False
