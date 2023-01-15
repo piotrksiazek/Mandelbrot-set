@@ -1,6 +1,6 @@
 import pygame
 
-# Create a blank image with a white background
+# dimensions
 width, height = 800, 800
 
 # Define the properties of the Mandelbrot set
@@ -9,8 +9,13 @@ ymin, ymax = -1.0, 1.0
 max_iter = 50
 max_iter_half = max_iter * 9/10
 
+
 # Initialize Pygame
 pygame.init()
+
+#text
+pygame.font.init()
+font_size = 15
 
 # Create a Pygame window
 screen = pygame.display.set_mode((width,height))
@@ -56,16 +61,40 @@ def get_new_boundaries(x, y, xmin, xmax, ymin, ymax, zoom):
         xmin += diff_x
         xmax += diff_x
 
-    xmin = get_zoom(xmin, zoom)
-    xmax = get_zoom(xmax, zoom)
-    ymin = get_zoom(ymin, zoom)
-    ymax = get_zoom(ymax, zoom)
+    smallest_coordinate = min([abs(xmin), abs(xmax), abs(ymin), abs(ymax)])
+    zoom_factor = smallest_coordinate/2
+
+    xmin = get_zoom(xmin, zoom_factor)
+    xmax = get_zoom(xmax, zoom_factor)
+    ymin = get_zoom(ymin, zoom_factor)
+    ymax = get_zoom(ymax, zoom_factor)
 
     return xmin, xmax, ymin, ymax
 
+def get_text(xmin, xmax, ymin, ymax, zoom_factor):
+    font = pygame.font.SysFont('Helvetica', font_size)
+
+    first_text = font.render(f'xmin: {xmin} xmax: {xmax}', True, (255, 255, 255))
+    second_text = font.render(f'ymin: {ymin} ymax: {ymax}', True, (255, 255, 255))
+    third_text = font.render(f'zoom factor: {str(zoom_factor)[:5]}', True, (255, 255, 255))
+
+    all_text_x = 10
+    first_text_y = 10
+    second_text_y = first_text_y + 1.5 * font_size
+    third_text_y = second_text_y + 1.5 * font_size
+
+    screen.blit(first_text, (all_text_x, first_text_y))
+    screen.blit(second_text, (all_text_x, second_text_y))
+    screen.blit(third_text, (all_text_x, third_text_y))
+
 zoom = 0.1
+step = 0.05
+step_increment = 0.05
+
 running = True
 draw = True
+
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -74,6 +103,17 @@ while running:
             pos = pygame.mouse.get_pos()
             xmin, xmax, ymin, ymax = get_new_boundaries(pos[0], pos[1], xmin, xmax, ymin, ymax, zoom)
             draw = True
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                print("left")
+                zoom -= step
+            if event.key == pygame.K_RIGHT:
+                zoom += step
+            if event.key == pygame.K_UP:
+                step += step_increment
+            if event.key == pygame.K_DOWN:
+                step -= step_increment
 
     if draw:
         # Generate the Mandelbrot set
@@ -93,7 +133,9 @@ while running:
                 r, g, b = i % 128, 0, 0
                 screen.set_at((x, y), (r, g, b))
 
-        pygame.display.flip()
         print(f'xmin: {xmin} xmax: {xmax}')
         print(f'ymin: {ymin} ymax: {ymax}')
     draw = False
+
+    get_text(xmin, xmax, ymin, ymax, zoom)
+    pygame.display.flip()
