@@ -6,7 +6,7 @@ width, height = 800, 800
 # Define the properties of the Mandelbrot set
 xmin, xmax = -1.0, 1.0
 ymin, ymax = -1.0, 1.0
-max_iter = 50
+max_iter = 400
 max_iter_half = max_iter * 9/10
 
 
@@ -107,17 +107,6 @@ while running:
             break
 
 
-        # if event.type == pygame.KEYDOWN:
-        #     if event.key == pygame.K_LEFT:
-        #         print("left")
-        #         zoom -= step
-        #     if event.key == pygame.K_RIGHT:
-        #         zoom += step
-        #     if event.key == pygame.K_UP:
-        #         step += step_increment
-        #     if event.key == pygame.K_DOWN:
-        #         step -= step_increment
-
     if draw:
         # Generate the Mandelbrot set
         for x in range(width):
@@ -135,6 +124,7 @@ while running:
                     i = 0
                 r, g, b = i % 128, 0, 0
                 screen.set_at((x, y), (r, g, b))
+        max_iter += 10
 
         print(f'xmin: {xmin} xmax: {xmax}')
         print(f'ymin: {ymin} ymax: {ymax}')
