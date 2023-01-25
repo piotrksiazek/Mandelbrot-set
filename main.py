@@ -1,31 +1,21 @@
 import pygame
 
-# dimensions
 width, height = 800, 800
 
-# Define the properties of the Mandelbrot set
 xmin, xmax = -1.0, 1.0
 ymin, ymax = -1.0, 1.0
 max_iter = 400
-max_iter_half = max_iter * 9/10
-
 
 # Initialize Pygame
 pygame.init()
 
-#text
+# text
 pygame.font.init()
 font_size = 15
 
-# Create a Pygame window
+# window
 screen = pygame.display.set_mode((width,height))
 pygame.display.set_caption('Mandelbrot Set')
-
-
-def get_zoom(coordinate, zoom_factor):
-    if coordinate < 0:
-        return coordinate + zoom_factor
-    return coordinate - zoom_factor
 
 def get_text(xmin, xmax, ymin, ymax, zoom_factor):
     font = pygame.font.SysFont('Helvetica', font_size)
@@ -61,7 +51,6 @@ class Clicker:
         self.ymin = 0
 
 
-
 clicker = Clicker()
 while running:
     for event in pygame.event.get():
@@ -69,11 +58,10 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
-            print('first')
+
             x = pos[0]
             y = pos[1]
 
-            #tutaj jest błąd. One najpierw powinny zostać zpróbkowane i dopiero potem
             zx = x * (xmax - xmin) / (width - 1) + xmin
             zy = -(y * (ymax - ymin) / (height - 1) + ymin)
 
@@ -120,14 +108,12 @@ while running:
                         break
                     z = z * z + c
                 # Color the pixel red at full iteration
-                if i > max_iter_half:
+                if i > max_iter:
                     i = 0
                 r, g, b = i % 128, 0, 0
                 screen.set_at((x, y), (r, g, b))
         max_iter += 10
 
-        print(f'xmin: {xmin} xmax: {xmax}')
-        print(f'ymin: {ymin} ymax: {ymax}')
     draw = False
 
     get_text(xmin, xmax, ymin, ymax, zoom)
